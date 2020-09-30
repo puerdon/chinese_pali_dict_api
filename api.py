@@ -5,7 +5,8 @@ import pandas as pd
 from opencc import OpenCC
 import json
 
-cc = OpenCC("t2s")
+t2s = OpenCC("t2s")
+s2t = OpenCC("s2t")
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 app.config["JSON_AS_ASCII"] = False
@@ -18,9 +19,9 @@ CORS(app)
 def home():
 	word = request.args.get('word')
 	if word is None:
-		return jsonify({'status': 'error', 'message': '請提供word參數。'})
+		return jsonify({'status': 'error', 'result': '請提供word參數。'})
 	print(word)
-	simplified_word = cc.convert(word)
+	simplified_word = t2s.convert(word)
 
 	df = pali_dict[pali_dict[2].str.contains(simplified_word)]
 
@@ -38,8 +39,8 @@ def home():
 		word = result_df[1][ind]
 		meaning = result_df[2][ind]
 		result_wordlist.append({
-			"word":word,
-			"meaning": meaning
+			"word": word,
+			"meaning": s2t.convert(meaning)
 		})
 
 
