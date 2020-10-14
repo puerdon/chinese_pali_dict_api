@@ -25,9 +25,11 @@ def home():
 	if word is None:
 		return jsonify({'status': 'error', 'result': '請提供word參數。'})
 	print(word)
-	simplified_word = t2s.convert(word)
 
-	df = pali_dict[pali_dict[2].str.contains(simplified_word)]
+	simplified_word = t2s.convert(word)
+	simplified_word = simplified_word.lower()
+
+	df = pali_dict[pali_dict[2].str.contains(simplified_word, case=False)]
 
 	# 檢查結果的總row數，太長就不要回傳
 	if df.shape[0] > MAX_ROW:
@@ -49,7 +51,7 @@ def home():
 
 		})
 
-	result_wordlist = sorted(result_wordlist, key=lambda k: k['meaning'].find(simplified_word))
+	result_wordlist = sorted(result_wordlist, key=lambda k: k['meaning'].lower().find(simplified_word))
 
 	for d in result_wordlist:
 		d['meaning'] = s2t.convert(d['meaning'])
