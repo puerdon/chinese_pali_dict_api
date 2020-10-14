@@ -51,8 +51,8 @@ def home():
 
 	result_wordlist = sorted(result_wordlist, key=lambda k: k['meaning'].find(simplified_word))
 
-	for k in result_wordlist:
-		result_wordlist[k] = s2t.convert(meaning)
+	for d in result_wordlist:
+		d['meaning'] = s2t.convert(d['meaning'])
 
 	return jsonify({
 		'status': 'success',
