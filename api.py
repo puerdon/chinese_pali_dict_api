@@ -10,7 +10,11 @@ s2t = OpenCC("s2t")
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 app.config["JSON_AS_ASCII"] = False
+
+# 限制一次最多的回傳筆數
 MAX_ROW = 200
+
+
 pali_dict = pd.read_csv("巴漢字典_明法尊者.csv", header=None)
 
 CORS(app)
@@ -40,9 +44,15 @@ def home():
 		meaning = result_df[2][ind]
 		result_wordlist.append({
 			"word": word,
-			"meaning": s2t.convert(meaning)
+			# "meaning": s2t.convert(meaning)
+			"meaning": meaning
+
 		})
 
+	result_wordlist = sorted(result_wordlist, key=lambda k: k['meaning'].find(simplified_word))
+
+	for k in result_wordlist:
+		result_wordlist[k] = s2t.convert(meaning)
 
 	return jsonify({
 		'status': 'success',
